@@ -1,9 +1,10 @@
 ﻿#include "LinkedList.h"
 #include "ArrayList.h"
 #include "StackChar.h"
-#include "StackInt.h"
+#include "StackDouble.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <windows.h>
 
 using namespace std;
@@ -11,41 +12,63 @@ using namespace std;
 
 int isVariable(char i) {
     switch (i) {
-    case '+': case '-': case '*': case '/': return 0;
+    case '+': case '-': case '*': case '/': case '^': case 's': case 'c': return 0;
     case ' ': return 1;
     default: return 2;
     }
 }
 
-void add(StackInt* newStack) {
-    int firstVar = newStack->pop();
-    int secVar = newStack->pop();
-    int result = firstVar + secVar;
+void add(StackDouble* newStack) {
+    double firstVar = newStack->pop();
+    double secVar = newStack->pop();
+    double result = firstVar + secVar;
     cout << firstVar << " + " << secVar << '\n';
     newStack->push(result);
 }
 
-void deduct(StackInt* newStack) {
-    int firstVar = newStack->pop();
-    int secVar = newStack->pop();
-    int result = secVar - firstVar;
+void deduct(StackDouble* newStack) {
+    double firstVar = newStack->pop();
+    double secVar = newStack->pop();
+    double result = secVar - firstVar;
     cout << secVar << " - " << firstVar << '\n';
     newStack->push(result);
 }
 
-void multiply(StackInt* newStack) {
-    int firstVar = newStack->pop();
-    int secVar = newStack->pop();
-    int result = firstVar * secVar;
+void multiply(StackDouble* newStack) {
+    double firstVar = newStack->pop();
+    double secVar = newStack->pop();
+    double result = firstVar * secVar;
     cout << firstVar << " * " << secVar << '\n';
     newStack->push(result);
 }
 
-void divide(StackInt* newStack) {
-    int firstVar = newStack->pop();
-    int secVar = newStack->pop();
-    int result = secVar / firstVar;
+void divide(StackDouble* newStack) {
+    double firstVar = newStack->pop();
+    double secVar = newStack->pop();
+    double result = secVar / firstVar;
     cout << secVar << " / " << firstVar << '\n';
+    newStack->push(result);
+}
+
+void degree(StackDouble* newStack) {
+    double firstVar = newStack->pop();
+    double secVar = newStack->pop();
+    double result = pow(secVar,firstVar);
+    cout << secVar << " ^ " << firstVar << '\n';
+    newStack->push(result);
+}
+
+void calcSin(StackDouble* newStack) {
+    double firstVar = newStack->pop();
+    double result = sin(firstVar);
+    cout << " sin( " << firstVar << " )\n";
+    newStack->push(result);
+}
+
+void calcCos(StackDouble* newStack) {
+    double firstVar = newStack->pop();
+    double result = cos(firstVar);
+    cout << " cos( " << firstVar << " )\n";
     newStack->push(result);
 }
 
@@ -54,6 +77,8 @@ int priority(char i) {
     case '(': return 1;
     case '+': case '-': return 2;
     case '*': case '/': return 3;
+    case '^': return 4;
+    case 's': case 'c': return 5;
     default: return 0;
     }
 }
@@ -71,14 +96,15 @@ int calculatePostfix(string postfix) {
         cout << "Неверное выражение, должны отсутсвовать скобки" << '\n';
         return 0;
     }
-    StackInt newStack;
+    StackDouble newStack;
     postfix += " ";
     string buffer = "";
     for (int i = 0; i < postfix.size(); i++) {
-        switch (isVariable(postfix[i])) {
+        switch (isVariable(postfix[i]) ) {
         case 1:
             if (buffer.size() != 0) {
-                int a = stoi(buffer);
+                double a;
+                istringstream(buffer) >> a;
                 newStack.push(a);
                 buffer = "";
             }
@@ -110,6 +136,21 @@ int calculatePostfix(string postfix) {
             case '/':
                 if (!newStack.isEmpty()) {
                     divide(&newStack);
+                    break;
+                }
+            case '^':
+                if (!newStack.isEmpty()) {
+                    degree(&newStack);
+                    break;
+                }
+            case 's':
+                if (!newStack.isEmpty()) {
+                    calcSin(&newStack);
+                    break;
+                }
+            case 'c':
+                if (!newStack.isEmpty()) {
+                    calcCos(&newStack);
                     break;
                 }
             }
@@ -151,7 +192,7 @@ int calculateInfix(string str) {
                 }
             }
             else {
-                if ((str[i] != ' ') && (!isdigit(str[i]))) {
+                if ((str[i] != ' ') && (!isdigit(str[i])) && (str[i]!='s' or str[i]!='c') && str[i]!='.') {
                     cout << "Встречена переменная: " << str[i] << " иницилизируйте её" << '\n';
                     cout << "Значение переменной: ";
                     string StrForInit = " ";
@@ -197,62 +238,6 @@ int calculateInfix(string str) {
     calculatePostfix(postfix);
 }
 
-int calculatePrefix(string prefix) {
-    if (prefix.find(")") != -1 || prefix.find("(") != -1) {
-        cout << "Должны отсутствовать скобки" << '\n';
-        return 0;
-    }
-    StackInt newStack;
-    string buffer = "";
-    for (int i = prefix.size(); i > -1; i--) {
-        switch (isVariable(prefix[i])) {
-        case 1:
-            if (buffer.size() != 0) {
-                reverse(buffer.begin(), buffer.end());
-                newStack.push(stoi(buffer));
-                buffer = "";
-            }
-            break;
-        case 2:
-            buffer += prefix[i];
-            break;
-        case 0:
-            if (newStack.size < 2) {
-                cout << "Выражение некорретно" << '\n';
-                return 0;
-            }
-            switch (prefix[i]) {
-            case '+':
-                if (!newStack.isEmpty()) {
-                    add(&newStack);
-                    break;
-                }
-            case '-':
-                if (!newStack.isEmpty()) {
-                    deduct(&newStack);
-                    break;
-                }
-            case '*':
-                if (!newStack.isEmpty()) {
-                    multiply(&newStack);
-                    break;
-                }
-            case '/':
-                if (!newStack.isEmpty()) {
-                    divide(&newStack);
-                    break;
-                }
-            }
-            break;
-        }
-    }
-    if (newStack.size > 1) {
-        cout << "Выражение неккоректно" << '\n';
-        return 1;
-    }
-    cout << newStack.top() << " Значение корректного выражение" << '\n';
-    return 1;
-}
 
 void printMenu() {
     system("cls");
@@ -281,9 +266,7 @@ void printArrayList() {
 void printSort() {
     system("cls");
     cout << "1. Преобразовать инфиксную запись и найти значение выражения" << '\n';
-    cout << "2. Найти значение выражение в обратной польской нотации" << '\n';
-    cout << "3. Найти значение выражения в прямой польской нотации" << '\n';
-    cout << "4. Вернуться назад" << '\n';
+    cout << "2. Вернуться назад" << '\n';
 }
 
 void menu() {
@@ -383,27 +366,16 @@ void menu() {
                 string Str;
                 switch (variant) {
                 case 1:
+                    cout << "Допустимые символы: + - * / ^ sin(s) cos(c) 0-9 .\n";
                     cin.ignore();
                     cout << "Введите выражение" << '\n';
                     getline(cin, Str);
                     calculateInfix(Str);
                     break;
-                case 2:
-                    cin.ignore();
-                    cout << "Введите выражение, каждый операнд и оператор должны быть разделены пробелами" << '\n';
-                    getline(cin, Str);
-                    calculatePostfix(Str);
-                    break;
-                case 3:
-                    cin.ignore();
-                    cout << "Введите выражение, каждый операнд и оператор должны быть разделены пробелами" << '\n';
-                    getline(cin, Str);
-                    calculatePrefix(Str);
-                    break;
                 }
-                if (variant != 4)
+                if (variant != 2)
                     system("pause");
-            } while (variant != 4);
+            } while (variant != 2);
             break;
         }
         if (var != 4)

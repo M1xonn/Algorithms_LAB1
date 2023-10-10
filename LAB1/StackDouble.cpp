@@ -1,40 +1,40 @@
-#include "StackInt.h"
+#include "StackDouble.h"
 #include <iostream>
 using namespace std;
-StackInt::StackInt()
+StackDouble::StackDouble()
 {
 	head = NULL;
 	size = 0;
 }
 
-StackInt::~StackInt()
+StackDouble::~StackDouble()
 {
 	while (size != 0)
 		pop();
 }
 
-bool StackInt::isEmpty()
+bool StackDouble::isEmpty()
 {
 	return head==NULL;
 }
 
-void StackInt::push(int value)
+void StackDouble::push(double value)
 {
-	NodeInt* newNode = new NodeInt;
+	NodeDouble* newNode = new NodeDouble;
 	newNode->value = value;
 	newNode->next = head;
 	size++;
 	head = newNode;
 }
 
-int StackInt::pop()
+double StackDouble::pop()
 {
 	if (isEmpty()) {
 		cout << "Stack is empty" << '\n';
 		return -1;
 	}
-	NodeInt* temp = head;
-	int popValue = temp->value;
+	NodeDouble* temp = head;
+	double popValue = temp->value;
 	head = head->next;
 	size--;
 	delete temp;
@@ -42,15 +42,15 @@ int StackInt::pop()
 	return 0;
 }
 
-int StackInt::top()
+double StackDouble::top()
 {
 	if (head != NULL)
 		return head->value;
 }
 
-void StackInt::display()
+void StackDouble::display()
 {
-	NodeInt* temp = head;
+	NodeDouble* temp = head;
 	while (temp != NULL) {
 		cout << temp->value << ' ';
 		temp = temp->next;
