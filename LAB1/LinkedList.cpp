@@ -1,6 +1,7 @@
 #include "LinkedList.h"
 #include "Node.h"
 #include <iostream>
+#include "ArrayList.h"
 using namespace std;
 
 
@@ -113,4 +114,17 @@ void LinkedList::remove(int index)
     delete curr;
     size--;
 }
- 
+
+void LinkedList::timSort()
+{
+    ArrayList arraylist;
+    for (int i = 0; i < size; i++) {
+        arraylist.add(get(i)->data);
+    }
+    arraylist.timSort();
+    while (size != 0) {
+        remove(0);
+    }
+    for (int i = 0; i < arraylist.size; i++)
+        push_back(arraylist.get(i));
+}

@@ -53,7 +53,7 @@ void divide(StackDouble* newStack) {
 void degree(StackDouble* newStack) {
     double firstVar = newStack->pop();
     double secVar = newStack->pop();
-    double result = pow(secVar,firstVar);
+    double result = pow(secVar, firstVar);
     cout << secVar << " ^ " << firstVar << '\n';
     newStack->push(result);
 }
@@ -100,7 +100,7 @@ int calculatePostfix(string postfix) {
     postfix += " ";
     string buffer = "";
     for (int i = 0; i < postfix.size(); i++) {
-        switch (isVariable(postfix[i]) ) {
+        switch (isVariable(postfix[i])) {
         case 1:
             if (buffer.size() != 0) {
                 double a;
@@ -192,7 +192,7 @@ int calculateInfix(string str) {
                 }
             }
             else {
-                if ((str[i] != ' ') && (!isdigit(str[i])) && (str[i]!='s' or str[i]!='c') && str[i]!='.') {
+                if ((str[i] != ' ') && (!isdigit(str[i])) && (str[i] != 's' or str[i] != 'c') && str[i] != '.') {
                     cout << "Встречена переменная: " << str[i] << " иницилизируйте её" << '\n';
                     cout << "Значение переменной: ";
                     string StrForInit = " ";
@@ -252,7 +252,8 @@ void printLinkedList() {
     cout << "1. Вставить новый элемент списка" << '\n';
     cout << "2. Удалить элемент списка" << '\n';
     cout << "3. Получить значение элемента списка" << '\n';
-    cout << "4. Вернуться назад" << '\n';
+    cout << "4. Отсортировать список" << '\n';
+    cout << "5. Вернуться назад" << '\n';
 }
 
 void printArrayList() {
@@ -260,7 +261,8 @@ void printArrayList() {
     cout << "1. Добавить элемент массива" << '\n';
     cout << "2. Удалить элемент массива" << '\n';
     cout << "3. Получить значение элемента массива" << '\n';
-    cout << "4. Вернуться назад" << '\n';
+    cout << "4. Отсортировать массив" << '\n';
+    cout << "5. Вернуться назад" << '\n';
 }
 
 void printSort() {
@@ -312,16 +314,26 @@ void menu() {
                     break;
                 case 3:
                     cout << '\n' << "Введите индекс значение которого хотите получить: ";
-                    cin >> index;            
-                    if (linkedList.get(index)!=NULL)
+                    cin >> index;
+                    if (linkedList.get(index) != NULL)
                         cout << linkedList.get(index)->data << '\n';
                     break;
+                case 4:
+                    linkedList.display();
+                    cout << '\n';
+                    linkedList.timSort();
+                    linkedList.display();
+                    break;
                 }
-                if (variant != 4)
+                if (variant != 5)
                     system("pause");
-            } while (variant != 4);
+            } while (variant != 5);
+            while (linkedList.size != 0)
+                linkedList.remove(0);
             break;
+
         case 2:
+
             cout << "Введите размер массива для автоматического заполнения: ";
             cin >> n;
             for (int i = 0; i < n; i++) {
@@ -354,11 +366,20 @@ void menu() {
                     cin >> index;
                     cout << arraylist.get(index) << '\n';
                     break;
+                case 4:
+                    arraylist.print();
+                    cout << '\n';
+                    arraylist.timSort();
+                    arraylist.print();
                 }
-                if (variant != 4)
+
+                if (variant != 5)
                     system("pause");
-            } while (variant != 4);
+            } while (variant != 5);
+            while (arraylist.size != 0)
+                arraylist.remove(0);
             break;
+
         case 3:
             do {
                 printSort();

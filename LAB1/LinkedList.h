@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Node.h"
+#include "ArrayList.h"
 
 class LinkedList
 {
@@ -15,5 +16,6 @@ public:
 	Node* get(int index);
 	Node* insert(int data, int index);
 	void remove(int index);
+	void timSort();
 };
 
